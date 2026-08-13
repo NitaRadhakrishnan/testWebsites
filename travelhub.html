@@ -1,0 +1,1273 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>TravelHub - Book Your Next Adventure</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            :root {
+                --primary: #0b1f3a;
+                --secondary: #1a3a5c;
+                --accent: #00b4d8;
+                --accent-dark: #0096b7;
+                --text: #1a1a2e;
+                --text-light: #6b7280;
+                --bg: #f0f4f8;
+                --white: #ffffff;
+                --success: #10b981;
+                --link: #0077b6;
+                --star: #f59e0b;
+                --border: #e2e8f0;
+                --danger: #ef4444;
+                --warm: #f97316;
+            }
+
+            body {
+                font-family: 'Arial', sans-serif;
+                color: var(--text);
+                background: var(--bg);
+                line-height: 1.4;
+            }
+
+            /* ═══════════════════════════════════════════
+           HEADER & NAVIGATION
+           ═══════════════════════════════════════════ */
+            .header {
+                background: var(--primary);
+                padding: 10px 20px;
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                position: sticky;
+                top: 0;
+                z-index: 1000;
+            }
+
+            .logo {
+                color: var(--white);
+                font-size: 22px;
+                font-weight: 700;
+                text-decoration: none;
+                border: 1px solid transparent;
+                padding: 4px 8px;
+                border-radius: 3px;
+            }
+
+            .logo:hover {
+                border-color: var(--white);
+            }
+            .logo span {
+                color: var(--accent);
+            }
+
+            .search-bar {
+                flex: 1;
+                display: flex;
+                border-radius: 4px;
+                overflow: hidden;
+                height: 40px;
+            }
+
+            .search-bar select {
+                background: #f3f3f3;
+                border: none;
+                padding: 0 8px;
+                font-size: 12px;
+                color: var(--text-light);
+                border-right: 1px solid var(--border);
+                cursor: pointer;
+            }
+
+            .search-bar input {
+                flex: 1;
+                border: none;
+                padding: 0 12px;
+                font-size: 14px;
+                outline: none;
+            }
+
+            .search-bar button {
+                background: var(--accent);
+                border: none;
+                padding: 0 16px;
+                cursor: pointer;
+                font-size: 18px;
+                color: var(--white);
+            }
+
+            .search-bar button:hover {
+                background: var(--accent-dark);
+            }
+
+            .header-nav {
+                display: flex;
+                gap: 16px;
+                align-items: center;
+            }
+
+            .header-nav a {
+                color: var(--white);
+                text-decoration: none;
+                font-size: 12px;
+                padding: 4px 8px;
+                border: 1px solid transparent;
+                border-radius: 3px;
+            }
+
+            .header-nav a:hover {
+                border-color: var(--white);
+            }
+            .header-nav a .nav-label {
+                display: block;
+                font-size: 10px;
+                color: #ccc;
+            }
+            .header-nav a .nav-value {
+                font-size: 13px;
+                font-weight: 700;
+            }
+
+            .trips-btn {
+                position: relative;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+            }
+
+            .trips-count {
+                position: absolute;
+                top: -4px;
+                left: 12px;
+                background: var(--accent);
+                color: var(--white);
+                font-size: 12px;
+                font-weight: 700;
+                padding: 0 5px;
+                border-radius: 8px;
+            }
+
+            /* Sub-nav */
+            .sub-nav {
+                background: var(--secondary);
+                padding: 8px 20px;
+                display: flex;
+                gap: 16px;
+                overflow-x: auto;
+            }
+
+            .sub-nav a {
+                color: var(--white);
+                text-decoration: none;
+                font-size: 13px;
+                white-space: nowrap;
+                padding: 4px 8px;
+                border-radius: 3px;
+            }
+
+            .sub-nav a:hover {
+                background: rgba(255, 255, 255, 0.1);
+            }
+
+            /* ═══════════════════════════════════════════
+           HERO BANNER
+           ═══════════════════════════════════════════ */
+            .hero {
+                background: linear-gradient(135deg, #0b1f3a 0%, #1a3a5c 40%, #00b4d8 100%);
+                padding: 50px 20px;
+                text-align: center;
+                color: var(--white);
+            }
+
+            .hero h1 {
+                font-size: 28px;
+                margin-bottom: 8px;
+            }
+            .hero p {
+                font-size: 16px;
+                color: #b8e4f0;
+                margin-bottom: 20px;
+            }
+
+            .hero-cta {
+                display: inline-block;
+                background: var(--accent);
+                color: var(--white);
+                padding: 12px 32px;
+                border-radius: 20px;
+                font-weight: 700;
+                font-size: 14px;
+                text-decoration: none;
+                border: none;
+                cursor: pointer;
+            }
+
+            .hero-cta:hover {
+                background: var(--accent-dark);
+            }
+
+            /* ═══════════════════════════════════════════
+           MAIN CONTENT
+           ═══════════════════════════════════════════ */
+            .container {
+                max-width: 1400px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+
+            .section-title {
+                font-size: 20px;
+                font-weight: 700;
+                margin-bottom: 16px;
+                color: var(--text);
+            }
+
+            /* ═══════════════════════════════════════════
+           DESTINATION GRID (PRODUCT GRID)
+           ═══════════════════════════════════════════ */
+            .product-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                gap: 16px;
+                margin-bottom: 40px;
+            }
+
+            .product-card {
+                background: var(--white);
+                border-radius: 8px;
+                border: 1px solid var(--border);
+                padding: 16px;
+                transition: box-shadow 0.2s;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .product-card:hover {
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+
+            .product-image {
+                width: 100%;
+                height: 160px;
+                background: linear-gradient(135deg, #e0f7fa, #f0f4f8);
+                border-radius: 4px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 12px;
+                font-size: 48px;
+            }
+
+            .product-badge {
+                display: inline-block;
+                background: var(--accent);
+                color: var(--white);
+                font-size: 11px;
+                font-weight: 700;
+                padding: 2px 8px;
+                border-radius: 3px;
+                margin-bottom: 8px;
+                width: fit-content;
+            }
+
+            .product-title {
+                font-size: 14px;
+                color: var(--link);
+                margin-bottom: 6px;
+                cursor: pointer;
+                line-height: 1.3;
+            }
+
+            .product-title:hover {
+                color: var(--accent-dark);
+                text-decoration: underline;
+            }
+
+            .product-rating {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                margin-bottom: 6px;
+            }
+
+            .stars {
+                color: var(--star);
+                font-size: 14px;
+            }
+            .rating-count {
+                font-size: 12px;
+                color: var(--link);
+            }
+
+            .product-price {
+                font-size: 20px;
+                font-weight: 700;
+                margin-bottom: 4px;
+                color: var(--text);
+            }
+
+            .product-price .currency {
+                font-size: 14px;
+            }
+            .product-price .per-person {
+                font-size: 12px;
+                color: var(--text-light);
+                font-weight: 400;
+            }
+
+            .product-original-price {
+                font-size: 12px;
+                color: var(--text-light);
+                text-decoration: line-through;
+                margin-bottom: 8px;
+            }
+
+            .product-delivery {
+                font-size: 12px;
+                color: var(--text-light);
+                margin-bottom: 12px;
+            }
+
+            .product-delivery strong {
+                color: var(--success);
+            }
+
+            .btn-add-to-cart {
+                background: var(--accent);
+                border: 1px solid var(--accent-dark);
+                border-radius: 20px;
+                padding: 8px 16px;
+                font-size: 13px;
+                cursor: pointer;
+                font-weight: 500;
+                width: 100%;
+                margin-top: auto;
+                color: var(--white);
+            }
+
+            .btn-add-to-cart:hover {
+                background: var(--accent-dark);
+            }
+
+            .btn-buy-now {
+                background: var(--warm);
+                border: 1px solid #ea580c;
+                border-radius: 20px;
+                padding: 8px 16px;
+                font-size: 13px;
+                cursor: pointer;
+                font-weight: 500;
+                width: 100%;
+                margin-top: 8px;
+                color: var(--white);
+            }
+
+            .btn-buy-now:hover {
+                background: #ea580c;
+            }
+
+            /* ═══════════════════════════════════════════
+           DEALS SECTION
+           ═══════════════════════════════════════════ */
+            .deals-banner {
+                background: var(--white);
+                border-radius: 8px;
+                border: 1px solid var(--border);
+                padding: 20px;
+                margin-bottom: 40px;
+            }
+
+            .deals-banner h2 {
+                color: var(--danger);
+                font-size: 18px;
+                margin-bottom: 12px;
+            }
+
+            .deals-row {
+                display: flex;
+                gap: 16px;
+                overflow-x: auto;
+                padding-bottom: 8px;
+            }
+
+            .deal-item {
+                min-width: 180px;
+                text-align: center;
+                cursor: pointer;
+                padding: 8px;
+                border-radius: 6px;
+                transition: background 0.2s;
+            }
+
+            .deal-item:hover {
+                background: #f0f9ff;
+            }
+
+            .deal-badge {
+                background: var(--danger);
+                color: white;
+                font-size: 11px;
+                font-weight: 700;
+                padding: 2px 6px;
+                border-radius: 3px;
+                display: inline-block;
+                margin-bottom: 8px;
+            }
+
+            .deal-image {
+                width: 120px;
+                height: 120px;
+                background: linear-gradient(135deg, #e0f7fa, #f0f4f8);
+                border-radius: 8px;
+                margin: 0 auto 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 36px;
+            }
+
+            .deal-title {
+                font-size: 12px;
+                color: var(--text);
+                margin-bottom: 4px;
+            }
+            .deal-price {
+                font-weight: 700;
+                font-size: 14px;
+                color: var(--secondary);
+            }
+
+            /* ═══════════════════════════════════════════
+           NEWSLETTER / SUBSCRIBE
+           ═══════════════════════════════════════════ */
+            .subscribe-section {
+                background: var(--secondary);
+                padding: 30px 20px;
+                text-align: center;
+                margin-bottom: 40px;
+                border-radius: 8px;
+            }
+
+            .subscribe-section h3 {
+                color: var(--white);
+                margin-bottom: 8px;
+                font-size: 18px;
+            }
+            .subscribe-section p {
+                color: #b8e4f0;
+                font-size: 13px;
+                margin-bottom: 16px;
+            }
+
+            .subscribe-form {
+                display: flex;
+                max-width: 400px;
+                margin: 0 auto;
+                gap: 8px;
+            }
+
+            .subscribe-form input {
+                flex: 1;
+                padding: 10px 14px;
+                border: none;
+                border-radius: 4px;
+                font-size: 13px;
+            }
+
+            .subscribe-form button {
+                background: var(--accent);
+                border: none;
+                padding: 10px 20px;
+                border-radius: 4px;
+                font-weight: 700;
+                font-size: 13px;
+                cursor: pointer;
+                color: var(--white);
+            }
+
+            .subscribe-form button:hover {
+                background: var(--accent-dark);
+            }
+
+            /* ═══════════════════════════════════════════
+           BOOKING SUMMARY (CART EQUIVALENT)
+           ═══════════════════════════════════════════ */
+            .booking-section {
+                background: var(--white);
+                border-radius: 8px;
+                border: 1px solid var(--border);
+                padding: 24px;
+                margin-bottom: 40px;
+            }
+
+            .booking-section h3 {
+                margin-bottom: 16px;
+                font-size: 16px;
+                border-bottom: 1px solid var(--border);
+                padding-bottom: 10px;
+            }
+
+            .booking-item {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                padding: 12px 0;
+                border-bottom: 1px solid #f0f0f0;
+            }
+
+            .booking-item-image {
+                width: 80px;
+                height: 80px;
+                background: linear-gradient(135deg, #e0f7fa, #f0f4f8);
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 28px;
+            }
+
+            .booking-item-details {
+                flex: 1;
+            }
+            .booking-item-title {
+                font-size: 14px;
+                color: var(--link);
+                margin-bottom: 4px;
+            }
+            .booking-item-meta {
+                font-size: 12px;
+                color: var(--text-light);
+                margin-bottom: 4px;
+            }
+            .booking-item-price {
+                font-weight: 700;
+                font-size: 16px;
+            }
+
+            .booking-item-remove {
+                background: none;
+                border: none;
+                color: var(--danger);
+                font-size: 12px;
+                cursor: pointer;
+                padding: 4px;
+            }
+
+            .booking-item-remove:hover {
+                text-decoration: underline;
+            }
+
+            .booking-summary {
+                margin-top: 16px;
+                padding-top: 16px;
+                border-top: 1px solid var(--border);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .booking-total {
+                font-size: 18px;
+                font-weight: 700;
+            }
+
+            .btn-checkout {
+                background: var(--accent);
+                border: 1px solid var(--accent-dark);
+                border-radius: 4px;
+                padding: 12px 32px;
+                font-size: 14px;
+                font-weight: 700;
+                cursor: pointer;
+                color: var(--white);
+            }
+
+            .btn-checkout:hover {
+                background: var(--accent-dark);
+            }
+
+            .btn-purchase {
+                background: var(--success);
+                border: 1px solid #059669;
+                border-radius: 8px;
+                padding: 12px 32px;
+                font-size: 14px;
+                font-weight: 700;
+                cursor: pointer;
+                width: 100%;
+                margin-top: 12px;
+                color: var(--white);
+            }
+
+            .btn-purchase:hover {
+                background: #059669;
+            }
+
+            /* ═══════════════════════════════════════════
+           SIGN UP SECTION
+           ═══════════════════════════════════════════ */
+            .signup-section {
+                background: var(--white);
+                border-radius: 8px;
+                border: 1px solid var(--border);
+                padding: 24px;
+                margin-bottom: 40px;
+                max-width: 380px;
+                text-align: center;
+            }
+
+            .signup-section h3 {
+                margin-bottom: 4px;
+                font-size: 22px;
+            }
+            .signup-section .subtitle {
+                color: var(--text-light);
+                font-size: 13px;
+                margin-bottom: 20px;
+            }
+
+            .form-group {
+                margin-bottom: 12px;
+            }
+
+            .form-group label {
+                display: block;
+                font-size: 13px;
+                font-weight: 600;
+                margin-bottom: 4px;
+            }
+
+            .form-group input,
+            .form-group textarea {
+                width: 100%;
+                padding: 8px 12px;
+                border: 1px solid var(--border);
+                border-radius: 4px;
+                font-size: 13px;
+                outline: none;
+            }
+
+            .form-group input:focus,
+            .form-group textarea:focus {
+                border-color: var(--accent);
+                box-shadow: 0 0 0 2px rgba(0, 180, 216, 0.1);
+            }
+
+            .btn-signup {
+                background: var(--accent);
+                border: 1px solid var(--accent-dark);
+                border-radius: 4px;
+                padding: 10px 24px;
+                font-size: 13px;
+                font-weight: 700;
+                cursor: pointer;
+                width: 100%;
+                margin-top: 12px;
+                color: var(--white);
+            }
+
+            .btn-signup:hover {
+                background: var(--accent-dark);
+            }
+
+            .signup-divider {
+                margin: 16px 0;
+                text-align: center;
+                color: var(--text-light);
+                font-size: 12px;
+            }
+
+            .btn-signin {
+                background: #e7e9ec;
+                border: 1px solid #adb1b8;
+                border-radius: 4px;
+                padding: 8px 24px;
+                font-size: 13px;
+                cursor: pointer;
+                width: 100%;
+            }
+
+            .btn-signin:hover {
+                background: #dfe3e8;
+            }
+
+            /* ═══════════════════════════════════════════
+           CONTACT / SUPPORT FORM
+           ═══════════════════════════════════════════ */
+            .contact-section {
+                background: var(--white);
+                border-radius: 8px;
+                border: 1px solid var(--border);
+                padding: 24px;
+                margin-bottom: 40px;
+                max-width: 500px;
+            }
+
+            .contact-section h3 {
+                margin-bottom: 16px;
+                font-size: 16px;
+            }
+
+            .btn-submit {
+                background: var(--accent);
+                border: 1px solid var(--accent-dark);
+                border-radius: 4px;
+                padding: 10px 24px;
+                font-size: 13px;
+                font-weight: 700;
+                cursor: pointer;
+                width: 100%;
+                color: var(--white);
+            }
+
+            .btn-submit:hover {
+                background: var(--accent-dark);
+            }
+
+            /* ═══════════════════════════════════════════
+           FOOTER
+           ═══════════════════════════════════════════ */
+            .footer {
+                background: var(--secondary);
+                padding: 30px 20px;
+                text-align: center;
+            }
+
+            .footer-links {
+                margin-bottom: 16px;
+            }
+
+            .footer-links a {
+                color: #ddd;
+                text-decoration: none;
+                font-size: 13px;
+                margin: 0 12px;
+            }
+
+            .footer-links a:hover {
+                text-decoration: underline;
+            }
+
+            .footer-copyright {
+                color: #94a3b8;
+                font-size: 11px;
+            }
+
+            /* ═══════════════════════════════════════════
+           NOTIFICATIONS
+           ═══════════════════════════════════════════ */
+            .notification {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: var(--primary);
+                color: var(--white);
+                padding: 12px 20px;
+                border-radius: 8px;
+                font-size: 13px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                z-index: 9999;
+                display: none;
+                animation: slideIn 0.3s ease;
+            }
+
+            @keyframes slideIn {
+                from {
+                    transform: translateY(20px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+
+            .notification.show {
+                display: block;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- ═══════════════════════════════════════════
+         HEADER
+         ═══════════════════════════════════════════ -->
+        <header class="header">
+            <a href="#" class="logo">Travel<span>Hub</span></a>
+
+            <div class="search-bar">
+                <select id="search-category">
+                    <option>All Trips</option>
+                    <option>Flights</option>
+                    <option>Hotels</option>
+                    <option>Vacation Packages</option>
+                    <option>Car Rentals</option>
+                    <option>Cruises</option>
+                </select>
+                <input type="text" id="search-input" placeholder="Where do you want to go?" />
+                <button id="search-btn">🔍</button>
+            </div>
+
+            <div class="header-nav">
+                <a href="#signup-section">
+                    <span class="nav-label">Hello, Traveler</span>
+                    <span class="nav-value">Account</span>
+                </a>
+                <a href="#" id="bookings-link">
+                    <span class="nav-label">My Trips</span>
+                    <span class="nav-value">& Bookings</span>
+                </a>
+                <a href="#booking-section" class="trips-btn" id="trips-link">
+                    <span class="trips-count" id="trips-count">0</span>
+                    <span class="nav-value">✈️ Trips</span>
+                </a>
+            </div>
+        </header>
+
+        <!-- Sub navigation -->
+        <nav class="sub-nav">
+            <a href="#">Last-Minute Deals</a>
+            <a href="#">Flights</a>
+            <a href="#">Hotels</a>
+            <a href="#">Vacation Packages</a>
+            <a href="#">Car Rentals</a>
+            <a href="#">Cruises</a>
+            <a href="#">Travel Insurance</a>
+            <a href="#contact-section">Support</a>
+        </nav>
+
+        <!-- ═══════════════════════════════════════════
+         HERO BANNER
+         ═══════════════════════════════════════════ -->
+        <section class="hero">
+            <h1>Explore the World — Save Up to 40%</h1>
+            <p>Flights, hotels, and vacation packages at unbeatable prices</p>
+            <button class="hero-cta" id="explore-deals-btn">Explore All Deals</button>
+        </section>
+
+        <div class="container">
+            <!-- ═══════════════════════════════════════════
+             DESTINATION LISTINGS
+             ═══════════════════════════════════════════ -->
+            <h2 class="section-title">Popular Destinations</h2>
+            <div class="product-grid" id="destination-grid">
+                <!-- Destinations injected by JS -->
+            </div>
+
+            <!-- ═══════════════════════════════════════════
+             FLASH DEALS
+             ═══════════════════════════════════════════ -->
+            <div class="deals-banner">
+                <h2>⚡ Flash Travel Deals</h2>
+                <div class="deals-row">
+                    <div class="deal-item" data-deal-id="deal-1">
+                        <span class="deal-badge">40% off</span>
+                        <div class="deal-image">🏖️</div>
+                        <div class="deal-title">Cancún All-Inclusive</div>
+                        <div class="deal-price">$899/person</div>
+                    </div>
+                    <div class="deal-item" data-deal-id="deal-2">
+                        <span class="deal-badge">35% off</span>
+                        <div class="deal-image">🗼</div>
+                        <div class="deal-title">Paris City Break</div>
+                        <div class="deal-price">$1,199/person</div>
+                    </div>
+                    <div class="deal-item" data-deal-id="deal-3">
+                        <span class="deal-badge">50% off</span>
+                        <div class="deal-image">🏔️</div>
+                        <div class="deal-title">Swiss Alps Retreat</div>
+                        <div class="deal-price">$749/person</div>
+                    </div>
+                    <div class="deal-item" data-deal-id="deal-4">
+                        <span class="deal-badge">30% off</span>
+                        <div class="deal-image">🌴</div>
+                        <div class="deal-title">Bali Paradise</div>
+                        <div class="deal-price">$1,049/person</div>
+                    </div>
+                    <div class="deal-item" data-deal-id="deal-5">
+                        <span class="deal-badge">25% off</span>
+                        <div class="deal-image">🎰</div>
+                        <div class="deal-title">Las Vegas Weekend</div>
+                        <div class="deal-price">$399/person</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════════
+             NEWSLETTER
+             ═══════════════════════════════════════════ -->
+            <div class="subscribe-section">
+                <h3>📬 Travel Alerts & Exclusive Offers</h3>
+                <p>Be the first to know about fare drops and secret deals</p>
+                <form class="subscribe-form" id="subscribe-form">
+                    <input type="email" id="subscribe-email" placeholder="Enter your email" required />
+                    <button type="submit" id="subscribe-btn">Subscribe</button>
+                </form>
+            </div>
+
+            <!-- ═══════════════════════════════════════════
+             BOOKING SUMMARY (CART EQUIVALENT)
+             ═══════════════════════════════════════════ -->
+            <div class="booking-section" id="booking-section">
+                <h3>✈️ Your Trip Summary</h3>
+                <div id="booking-items">
+                    <div class="booking-item" data-booking-id="bk-1">
+                        <div class="booking-item-image">🏨</div>
+                        <div class="booking-item-details">
+                            <div class="booking-item-title">Grand Plaza Hotel — Tokyo, 3 Nights</div>
+                            <div class="booking-item-meta">Check-in: Jul 15 • Check-out: Jul 18</div>
+                            <div class="booking-item-price" data-price="540">$540.00</div>
+                        </div>
+                        <button class="booking-item-remove">Remove</button>
+                    </div>
+                    <div class="booking-item" data-booking-id="bk-2">
+                        <div class="booking-item-image">✈️</div>
+                        <div class="booking-item-details">
+                            <div class="booking-item-title">Round-trip Flight: SFO → NRT (Economy)</div>
+                            <div class="booking-item-meta">Depart: Jul 14 • Return: Jul 19</div>
+                            <div class="booking-item-price" data-price="892">$892.00</div>
+                        </div>
+                        <button class="booking-item-remove">Remove</button>
+                    </div>
+                </div>
+                <div class="booking-summary">
+                    <div class="booking-total">Trip Total: <strong>$1,432.00</strong></div>
+                    <button class="btn-checkout" id="checkout-btn">Continue to Payment</button>
+                </div>
+                <button class="btn-purchase" id="purchase-btn">🔒 Confirm & Book Now</button>
+            </div>
+
+            <!-- ═══════════════════════════════════════════
+             SIGN UP
+             ═══════════════════════════════════════════ -->
+            <div class="signup-section" id="signup-section">
+                <h3>Join TravelHub</h3>
+                <p class="subtitle">Unlock member-only prices and rewards</p>
+                <div class="form-group">
+                    <input type="text" id="signup-name" placeholder="Full name" />
+                </div>
+                <div class="form-group">
+                    <input type="email" id="signup-email" placeholder="Email address" />
+                </div>
+                <div class="form-group">
+                    <input type="password" id="signup-password" placeholder="Create password" />
+                </div>
+                <button class="btn-signup" id="signup-btn">Create your TravelHub account</button>
+                <div class="signup-divider">— Already a member? —</div>
+                <button class="btn-signin" id="signin-btn">Sign in</button>
+            </div>
+
+            <!-- ═══════════════════════════════════════════
+             CONTACT / SUPPORT FORM
+             ═══════════════════════════════════════════ -->
+            <div class="contact-section" id="contact-section">
+                <h3>📞 Travel Support</h3>
+                <form id="contact-form">
+                    <div class="form-group">
+                        <label>Your Name</label>
+                        <input type="text" id="contact-name" placeholder="Jane Traveler" />
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="contact-email" placeholder="jane@example.com" />
+                    </div>
+                    <div class="form-group">
+                        <label>Booking Reference (optional)</label>
+                        <input type="text" id="contact-ref" placeholder="TH-123456" />
+                    </div>
+                    <div class="form-group">
+                        <label>How can we help?</label>
+                        <textarea id="contact-message" rows="4" placeholder="Describe your issue or question..."></textarea>
+                    </div>
+                    <button type="submit" class="btn-submit" id="contact-submit-btn">Submit Request</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════
+         FOOTER
+         ═══════════════════════════════════════════ -->
+        <footer class="footer">
+            <div class="footer-links">
+                <a href="#">About TravelHub</a>
+                <a href="#">Careers</a>
+                <a href="#">Travel Blog</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Help Center</a>
+            </div>
+            <div class="footer-copyright">
+                © 2026 TravelHub.com — GTM Container Demo Site for testing tag manager setup and event tracking
+            </div>
+        </footer>
+
+        <!-- Notification toast -->
+        <div class="notification" id="notification"></div>
+
+        <!-- ═══════════════════════════════════════════
+         AAT PII DETECTION PROTOTYPE
+         ═══════════════════════════════════════════ -->
+        <script>
+            !(function (w, d, s, t, a) {
+                if (w.amzn) return;
+                w.amzn = a = function () {
+                    w.amzn.q.push([arguments, new Date().getTime()]);
+                };
+                a.q = [];
+                a.version = '0.0';
+                s = d.createElement('script');
+                s.src = 'https://d1leee6d0c4cew.cloudfront.net/aat/amzn-pii.js';
+                s.async = true;
+                t = d.getElementsByTagName('script')[0];
+                t.parentNode.insertBefore(s, t);
+            })(window, document);
+            amzn('setRegion', 'NA');
+            amzn('setStage', 'beta');
+            amzn('addTag', 'ebba7708-376c-43cf-9a8b-9f57f2660f1c');
+            amzn('trackEvent', 'PageView');
+        </script>
+
+        <!-- ═══════════════════════════════════════════
+         JAVASCRIPT
+         ═══════════════════════════════════════════ -->
+        <script>
+            // ─── DESTINATION DATA ───
+            const destinations = [
+                {
+                    id: 'D001',
+                    name: 'Tokyo Adventure — 5 Days / 4 Nights',
+                    price: 1299,
+                    originalPrice: 1799,
+                    rating: 4.8,
+                    reviews: 3241,
+                    emoji: '🗾',
+                    category: 'Packages',
+                    type: 'Asia',
+                },
+                {
+                    id: 'D002',
+                    name: 'Santorini Escape — Oceanview Suite, 4 Nights',
+                    price: 1599,
+                    originalPrice: 2199,
+                    rating: 4.9,
+                    reviews: 2876,
+                    emoji: '🇬🇷',
+                    category: 'Hotels',
+                    type: 'Europe',
+                },
+                {
+                    id: 'D003',
+                    name: 'NYC to London — Round-trip Economy Flight',
+                    price: 449,
+                    originalPrice: 689,
+                    rating: 4.5,
+                    reviews: 8932,
+                    emoji: '✈️',
+                    category: 'Flights',
+                    type: 'Transatlantic',
+                },
+                {
+                    id: 'D004',
+                    name: 'Costa Rica Rainforest Eco-Lodge — 6 Nights',
+                    price: 899,
+                    originalPrice: 1299,
+                    rating: 4.7,
+                    reviews: 1567,
+                    emoji: '🌿',
+                    category: 'Hotels',
+                    type: 'Central America',
+                },
+                {
+                    id: 'D005',
+                    name: 'Mediterranean Cruise — 7 Days All-Inclusive',
+                    price: 2199,
+                    originalPrice: 3199,
+                    rating: 4.6,
+                    reviews: 4521,
+                    emoji: '🚢',
+                    category: 'Cruises',
+                    type: 'Europe',
+                },
+                {
+                    id: 'D006',
+                    name: 'Iceland Northern Lights Tour — 3 Nights',
+                    price: 1049,
+                    originalPrice: 1449,
+                    rating: 4.8,
+                    reviews: 2103,
+                    emoji: '🌌',
+                    category: 'Packages',
+                    type: 'Europe',
+                },
+                {
+                    id: 'D007',
+                    name: 'Dubai Luxury Resort — 5 Nights w/ Transfers',
+                    price: 1899,
+                    originalPrice: 2499,
+                    rating: 4.7,
+                    reviews: 3789,
+                    emoji: '🏙️',
+                    category: 'Hotels',
+                    type: 'Middle East',
+                },
+                {
+                    id: 'D008',
+                    name: 'Hawaii Island-Hopping — 7 Days Multi-Island',
+                    price: 1749,
+                    originalPrice: 2399,
+                    rating: 4.9,
+                    reviews: 5634,
+                    emoji: '🌺',
+                    category: 'Packages',
+                    type: 'USA',
+                },
+            ];
+
+            // ─── RENDER DESTINATIONS ───
+            const grid = document.getElementById('destination-grid');
+            destinations.forEach((d) => {
+                const stars = '★'.repeat(Math.floor(d.rating)) + (d.rating % 1 >= 0.5 ? '½' : '');
+                const savings = Math.round(((d.originalPrice - d.price) / d.originalPrice) * 100);
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.setAttribute('data-destination-id', d.id);
+                card.innerHTML = `
+                <div class="product-image">${d.emoji}</div>
+                <div class="product-badge">${d.category}</div>
+                <div class="product-title" data-destination-name="${d.name}">${d.name}</div>
+                <div class="product-rating">
+                    <span class="stars">${stars}</span>
+                    <span class="rating-count">${d.reviews.toLocaleString()} reviews</span>
+                </div>
+                <div class="product-price" data-price="${d.price}">
+                    <span class="currency">$</span>${d.price.toLocaleString()}<span class="per-person"> /person</span>
+                </div>
+                <div class="product-original-price">Was: $${d.originalPrice.toLocaleString()} — Save ${savings}%</div>
+                <div class="product-delivery">🕐 Free cancellation up to <strong>48 hrs before</strong></div>
+                <button class="btn-add-to-cart" data-destination-id="${d.id}" data-destination-name="${d.name}" data-price="${d.price}" data-category="${d.category}">Add to Trip</button>
+                <button class="btn-buy-now" data-destination-id="${d.id}" data-destination-name="${d.name}" data-price="${d.price}" data-category="${d.category}">Book Now</button>
+            `;
+                grid.appendChild(card);
+            });
+
+            // ─── TRIPS / BOOKING LOGIC ───
+            let tripsCount = 2;
+            document.getElementById('trips-count').textContent = tripsCount;
+
+            document.querySelectorAll('.btn-add-to-cart').forEach((btn) => {
+                btn.addEventListener('click', (e) => {
+                    tripsCount++;
+                    document.getElementById('trips-count').textContent = tripsCount;
+                    const name = e.target.getAttribute('data-destination-name');
+                    showNotification(`✅ Added "${name}" to your trip`);
+                });
+            });
+
+            document.querySelectorAll('.btn-buy-now').forEach((btn) => {
+                btn.addEventListener('click', (e) => {
+                    const name = e.target.getAttribute('data-destination-name');
+                    const price = e.target.getAttribute('data-price');
+                    showNotification(`🔒 Processing booking: "${name}" — $${parseInt(price).toLocaleString()}/person`);
+                });
+            });
+
+            // ─── SEARCH ───
+            document.getElementById('search-btn').addEventListener('click', () => {
+                const query = document.getElementById('search-input').value;
+                if (query) {
+                    showNotification(`🔍 Searching destinations: "${query}"`);
+                }
+            });
+
+            document.getElementById('search-input').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    document.getElementById('search-btn').click();
+                }
+            });
+
+            // ─── CHECKOUT / BOOKING ───
+            document.getElementById('checkout-btn').addEventListener('click', () => {
+                showNotification('💳 Proceeding to payment...');
+            });
+
+            document.getElementById('purchase-btn').addEventListener('click', () => {
+                showNotification('✅ Booking confirmed! Check your email for trip details.');
+            });
+
+            // ─── SUBSCRIBE ───
+            document.getElementById('subscribe-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = document.getElementById('subscribe-email').value;
+                showNotification(`📬 Subscribed to travel alerts: ${email}`);
+                document.getElementById('subscribe-email').value = '';
+            });
+
+            // ─── SIGN UP ───
+            document.getElementById('signup-btn').addEventListener('click', () => {
+                const name = document.getElementById('signup-name').value;
+                const email = document.getElementById('signup-email').value;
+                if (name && email) {
+                    showNotification(`✍️ TravelHub account created for: ${name}`);
+                } else {
+                    showNotification('⚠️ Please fill in all fields');
+                }
+            });
+
+            document.getElementById('signin-btn').addEventListener('click', () => {
+                showNotification('🔑 Redirecting to sign in...');
+            });
+
+            // ─── CONTACT / SUPPORT ───
+            document.getElementById('contact-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const name = document.getElementById('contact-name').value;
+                showNotification(`📋 Support request submitted from: ${name}`);
+            });
+
+            // ─── BOOKING REMOVE ───
+            document.querySelectorAll('.booking-item-remove').forEach((btn) => {
+                btn.addEventListener('click', (e) => {
+                    const item = e.target.closest('.booking-item');
+                    const title = item.querySelector('.booking-item-title').textContent;
+                    item.remove();
+                    tripsCount = Math.max(0, tripsCount - 1);
+                    document.getElementById('trips-count').textContent = tripsCount;
+                    showNotification(`🗑️ Removed "${title}" from trip`);
+                });
+            });
+
+            // ─── DEAL ITEMS ───
+            document.querySelectorAll('.deal-item').forEach((item) => {
+                item.addEventListener('click', () => {
+                    const title = item.querySelector('.deal-title').textContent;
+                    showNotification(`👁️ Viewing deal: ${title}`);
+                });
+            });
+
+            // ─── DESTINATION TITLE CLICK (ViewContent) ───
+            document.querySelectorAll('.product-title').forEach((title) => {
+                title.addEventListener('click', () => {
+                    const name = title.getAttribute('data-destination-name');
+                    showNotification(`👁️ Viewing: "${name}"`);
+                });
+            });
+
+            // ─── HERO CTA ───
+            document.getElementById('explore-deals-btn').addEventListener('click', () => {
+                showNotification('🌍 Browsing all travel deals...');
+            });
+
+            // ─── NOTIFICATION HELPER ───
+            function showNotification(msg) {
+                const el = document.getElementById('notification');
+                el.textContent = msg;
+                el.classList.add('show');
+                setTimeout(() => el.classList.remove('show'), 3000);
+            }
+        </script>
+    </body>
+</html>
