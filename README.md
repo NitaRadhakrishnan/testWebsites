@@ -26,10 +26,9 @@ validated against either one:
 - Support / contact form submission
 - Cookie consent banner with Accept and Decline wired to the consent library
 
-`gadgetgrid.html` additionally has a deliberately PII-rich checkout form (name, email, phone, date of
-birth, postal address, card number, expiry, CVC — all with standard `autocomplete` attributes) for
-exercising form-field detection. It is a demo form: nothing is submitted anywhere, so fill it with
-fake data only.
+Neither site collects address or payment details. Checkout is two buttons that fire notifications —
+there is no payment form to fill in. The only text inputs on either page are search, newsletter email,
+sign-up (name / email / password) and the support form (name / email / reference / message).
 
 ## Tag configuration
 
