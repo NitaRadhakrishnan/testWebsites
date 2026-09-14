@@ -9,6 +9,8 @@ HTML file (inline CSS + JS, no build step) served directly by GitHub Pages from 
 | --- | --- | --- | --- |
 | TravelHub | Travel booking | [travelhub.html](https://nitaradhakrishnan.github.io/testWebsites/travelhub.html) | [`travelhub.html`](travelhub.html) |
 | GadgetGrid | Electronics retail | [gadgetgrid.html](https://nitaradhakrishnan.github.io/testWebsites/gadgetgrid.html) | [`gadgetgrid.html`](gadgetgrid.html) |
+| TravelHub Sign In | Travel booking | [signin.html](https://nitaradhakrishnan.github.io/testWebsites/signin.html) | [`signin.html`](signin.html) |
+| GadgetGrid Sign In | Electronics retail | [signin.html?site=gadgetgrid](https://nitaradhakrishnan.github.io/testWebsites/signin.html?site=gadgetgrid) | [`signin.html`](signin.html) |
 
 ## What each site gives you
 
@@ -29,6 +31,11 @@ validated against either one:
 Neither site collects address or payment details. Checkout is two buttons that fire notifications —
 there is no payment form to fill in. The only text inputs on either page are search, newsletter email,
 sign-up (name / email / password) and the support form (name / email / reference / message).
+
+Both sites use an `anon_customer_id` first-party cookie as a pseudonymous browser identifier.
+Separate `th_session_id` and `gg_session_id` cookies represent their demo sign-in sessions.
+Signing in preserves the anonymous ID, while signing out removes that site's session and rotates
+the anonymous ID.
 
 ## Tag configuration
 

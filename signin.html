@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Sign in - TravelHub</title>
+        <script>
+            (function () {
+                var isGadgetGrid = new URLSearchParams(window.location.search).get('site') === 'gadgetgrid';
+                window.DemoSite = isGadgetGrid
+                    ? {
+                          name: 'GadgetGrid',
+                          logoPrefix: 'Gadget',
+                          logoAccent: 'Grid',
+                          homeUrl: 'gadgetgrid.html',
+                          backLabel: 'Back to store',
+                          sessionCookie: 'gg_session_id',
+                          profileKey: 'gg_demo_profile',
+                          defaultName: 'Shopper',
+                      }
+                    : {
+                          name: 'TravelHub',
+                          logoPrefix: 'Travel',
+                          logoAccent: 'Hub',
+                          homeUrl: 'travelhub.html',
+                          backLabel: 'Back to TravelHub',
+                          sessionCookie: 'th_session_id',
+                          profileKey: 'th_demo_profile',
+                          defaultName: 'Traveler',
+                      };
+                document.documentElement.setAttribute('data-site', isGadgetGrid ? 'gadgetgrid' : 'travelhub');
+                document.title = 'Sign in - ' + window.DemoSite.name;
+            })();
+        </script>
+        <style>
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            :root {
+                --primary: #0b1f3a;
+                --accent: #00b4d8;
+                --accent-dark: #0096b7;
+                --text: #1a1a2e;
+                --text-light: #6b7280;
+                --bg: #f0f4f8;
+                --white: #ffffff;
+                --border: #e2e8f0;
+                --danger: #ef4444;
+                --success: #10b981;
+            }
+
+            html[data-site='gadgetgrid'] {
+                --primary: #1e1b4b;
+                --accent: #f59e0b;
+                --accent-dark: #d97706;
+                --text: #18181b;
+                --text-light: #71717a;
+                --bg: #f4f4f5;
+                --border: #e4e4e7;
+                --danger: #dc2626;
+                --success: #15803d;
+            }
+
+            body {
+                min-height: 100vh;
+                background: var(--bg);
+                color: var(--text);
+                font-family: Arial, sans-serif;
+            }
+
+            .header {
+                min-height: 64px;
+                padding: 12px 24px;
+                background: var(--primary);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 16px;
+            }
+
+            .logo {
+                color: var(--white);
+                font-size: 22px;
+                font-weight: 700;
+                text-decoration: none;
+            }
+
+            .logo span {
+                color: var(--accent);
+            }
+
+            .back-link {
+                color: var(--white);
+                font-size: 13px;
+                text-decoration: none;
+            }
+
+            .back-link:hover {
+                text-decoration: underline;
+            }
+
+            main {
+                width: min(100% - 32px, 420px);
+                margin: 56px auto;
+            }
+
+            .signin-panel {
+                background: var(--white);
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                padding: 28px;
+            }
+
+            h1 {
+                font-size: 24px;
+                margin-bottom: 6px;
+            }
+
+            .subtitle {
+                color: var(--text-light);
+                font-size: 13px;
+                margin-bottom: 24px;
+            }
+
+            .form-group {
+                margin-bottom: 16px;
+            }
+
+            label {
+                display: block;
+                margin-bottom: 6px;
+                font-size: 13px;
+                font-weight: 600;
+            }
+
+            input {
+                width: 100%;
+                border: 1px solid var(--border);
+                border-radius: 4px;
+                padding: 11px 12px;
+                font: inherit;
+                font-size: 14px;
+            }
+
+            input:focus {
+                border-color: var(--primary);
+                box-shadow: 0 0 0 2px rgba(0, 180, 216, 0.12);
+                outline: none;
+            }
+
+            .signin-button,
+            .signout-button {
+                width: 100%;
+                border-radius: 4px;
+                padding: 11px 18px;
+                font-size: 14px;
+                font-weight: 700;
+                cursor: pointer;
+            }
+
+            .signin-button {
+                margin-top: 4px;
+                border: 1px solid var(--accent-dark);
+                background: var(--accent);
+                color: var(--white);
+            }
+
+            .signin-button:hover {
+                background: var(--accent-dark);
+            }
+
+            .signout-button {
+                border: 1px solid var(--danger);
+                background: var(--white);
+                color: var(--danger);
+            }
+
+            .account-panel {
+                display: none;
+            }
+
+            .account-panel.show {
+                display: block;
+            }
+
+            .account-panel p {
+                margin-bottom: 18px;
+                color: var(--text-light);
+                font-size: 14px;
+            }
+
+            .account-panel strong {
+                color: var(--text);
+            }
+
+            .status {
+                min-height: 20px;
+                margin-top: 14px;
+                color: var(--danger);
+                font-size: 13px;
+            }
+
+            .status.success {
+                color: var(--success);
+            }
+
+            @media (max-width: 520px) {
+                main {
+                    margin: 28px auto;
+                }
+
+                .signin-panel {
+                    padding: 22px;
+                }
+            }
+        </style>
+        <script>
+            (function () {
+                var ANONYMOUS_ID_COOKIE = 'anon_customer_id';
+                var site = window.DemoSite;
+                var SESSION_COOKIE = site.sessionCookie;
+                var PROFILE_KEY = site.profileKey;
+                var YEAR_IN_SECONDS = 365 * 24 * 60 * 60;
+                var SESSION_SECONDS = 7 * 24 * 60 * 60;
+                var COOKIE_PATH = window.location.pathname.slice(0, window.location.pathname.lastIndexOf('/') + 1) || '/';
+
+                function readCookie(name) {
+                    var match = document.cookie.match(
+                        new RegExp('(?:^|; )' + name.replace(/([.$?*|{}()[\]\\/+^])/g, '\\$1') + '=([^;]*)')
+                    );
+                    return match ? decodeURIComponent(match[1]) : null;
+                }
+
+                function writeCookie(name, value, maxAge) {
+                    var secure = window.location.protocol === 'https:' ? ';Secure' : '';
+                    document.cookie =
+                        name +
+                        '=' +
+                        encodeURIComponent(value) +
+                        ';path=' +
+                        COOKIE_PATH +
+                        ';max-age=' +
+                        maxAge +
+                        ';SameSite=Lax' +
+                        secure;
+                }
+
+                function randomId() {
+                    if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+                        return window.crypto.randomUUID().replace(/-/g, '');
+                    }
+                    return Array.from({ length: 32 }, function () {
+                        return Math.floor(Math.random() * 16).toString(16);
+                    }).join('');
+                }
+
+                function getProfile() {
+                    try {
+                        return JSON.parse(localStorage.getItem(PROFILE_KEY) || 'null');
+                    } catch {
+                        return null;
+                    }
+                }
+
+                if (!readCookie(ANONYMOUS_ID_COOKIE)) {
+                    writeCookie(ANONYMOUS_ID_COOKIE, randomId(), YEAR_IN_SECONDS);
+                }
+
+                window.SiteAuth = {
+                    getProfile: getProfile,
+                    isSignedIn: function () {
+                        return Boolean(readCookie(SESSION_COOKIE) && getProfile());
+                    },
+                    signIn: function (email) {
+                        var displayName = email.split('@')[0] || site.defaultName;
+                        localStorage.setItem(PROFILE_KEY, JSON.stringify({ email: email, displayName: displayName }));
+                        writeCookie(SESSION_COOKIE, randomId(), SESSION_SECONDS);
+                    },
+                    signOut: function () {
+                        writeCookie(SESSION_COOKIE, '', 0);
+                        localStorage.removeItem(PROFILE_KEY);
+                        writeCookie(ANONYMOUS_ID_COOKIE, randomId(), YEAR_IN_SECONDS);
+                    },
+                };
+            })();
+        </script>
+    </head>
+    <body>
+        <header class="header">
+            <a href="travelhub.html" class="logo" id="site-logo">Travel<span>Hub</span></a>
+            <a href="travelhub.html" class="back-link" id="back-link">Back to TravelHub</a>
+        </header>
+
+        <main>
+            <section class="signin-panel">
+                <div id="signin-form-panel">
+                    <h1>Sign in</h1>
+                    <p class="subtitle" id="signin-subtitle">Access your TravelHub account</p>
+                    <form id="signin-form">
+                        <div class="form-group">
+                            <label for="signin-email">Email address</label>
+                            <input type="email" id="signin-email" autocomplete="email" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="signin-password">Password</label>
+                            <input type="password" id="signin-password" autocomplete="current-password" required />
+                        </div>
+                        <button type="submit" class="signin-button">Sign in</button>
+                        <p class="status" id="signin-status" aria-live="polite"></p>
+                    </form>
+                </div>
+
+                <div class="account-panel" id="account-panel">
+                    <h1>You're signed in</h1>
+                    <p>Signed in as <strong id="signed-in-email"></strong></p>
+                    <button type="button" class="signout-button" id="signout-button">Sign out</button>
+                </div>
+            </section>
+        </main>
+
+        <script>
+            var site = window.DemoSite;
+            var siteLogo = document.getElementById('site-logo');
+            siteLogo.href = site.homeUrl;
+            siteLogo.innerHTML = site.logoPrefix + '<span>' + site.logoAccent + '</span>';
+            document.getElementById('back-link').href = site.homeUrl;
+            document.getElementById('back-link').textContent = site.backLabel;
+            document.getElementById('signin-subtitle').textContent = 'Access your ' + site.name + ' account';
+
+            function updateView() {
+                var signedIn = window.SiteAuth.isSignedIn();
+                var profile = window.SiteAuth.getProfile();
+                document.getElementById('signin-form-panel').style.display = signedIn ? 'none' : 'block';
+                document.getElementById('account-panel').classList.toggle('show', signedIn);
+                document.getElementById('signed-in-email').textContent = signedIn ? profile.email : '';
+            }
+
+            document.getElementById('signin-form').addEventListener('submit', function (event) {
+                event.preventDefault();
+                var email = document.getElementById('signin-email').value.trim();
+                var password = document.getElementById('signin-password').value;
+                var status = document.getElementById('signin-status');
+
+                if (!email || !password) {
+                    status.textContent = 'Enter your email and password.';
+                    return;
+                }
+
+                window.SiteAuth.signIn(email);
+                status.classList.add('success');
+                status.textContent = 'Signed in. Returning to ' + site.name + '...';
+                window.setTimeout(function () {
+                    window.location.href = site.homeUrl + '#signup-section';
+                }, 300);
+            });
+
+            document.getElementById('signout-button').addEventListener('click', function () {
+                window.SiteAuth.signOut();
+                updateView();
+            });
+
+            updateView();
+        </script>
+    </body>
+</html>
