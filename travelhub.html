@@ -1102,7 +1102,11 @@
         </div>
 
         <!-- ═══════════════════════════════════════════
-         AAT PII DETECTION PROTOTYPE
+         AAT TAG — PRODUCTION
+
+         Now loading the real production tag (c.amazon-adsystem.com/aat/amzn.js).
+         The experimental PII-prototype build is commented out inline below; swap
+         the commented/active pairs to go back to it.
          ═══════════════════════════════════════════ -->
         <script>
             !(function (w, d, s, t, a) {
@@ -1113,17 +1117,28 @@
                 a.q = [];
                 a.version = '0.0';
                 s = d.createElement('script');
-                s.src = 'https://d1leee6d0c4cew.cloudfront.net/aat/amzn-experimental-pii.js';
+                // Experimental PII-detection prototype (beta CDN):
+                // s.src = 'https://d1leee6d0c4cew.cloudfront.net/aat/amzn-experimental-pii.js';
+                s.src = 'https://c.amazon-adsystem.com/aat/amzn.js';
                 s.async = true;
                 t = d.getElementsByTagName('script')[0];
                 t.parentNode.insertBefore(s, t);
+
+                // Keep loading the consent library separately: amzn.js does NOT load it
+                // itself, it only reads the amzn_consent cookie and listens for the
+                // amznConsentChange event. This file is byte-identical on both hosts.
                 var c = d.createElement('script');
-                c.src = 'https://d1leee6d0c4cew.cloudfront.net/aat/amzn-consent.js';
+                // c.src = 'https://d1leee6d0c4cew.cloudfront.net/aat/amzn-consent.js';
+                c.src = 'https://c.amazon-adsystem.com/aat/amzn-consent.js';
                 c.async = true;
                 t.parentNode.insertBefore(c, t);
             })(window, document);
             amzn('setRegion', 'NA');
-            amzn('setStage', 'beta');
+            // setStage picks the ARA reporting endpoint: 'beta'/'test' -> beta-ara,
+            // 'gamma' -> gamma-ara, omitted -> ara (amzn.js already defaults to PROD).
+            // Left commented on purpose: setting 'beta' here would load the prod script
+            // but still report to the beta endpoint.
+            // amzn('setStage', 'beta');
             amzn('addTag', 'ead7b209-8f99-4bb2-89ad-e7a4d07e9e6b');
             amzn('trackEvent', 'PageView');
         </script>
