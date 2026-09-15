@@ -700,6 +700,44 @@
                 background: #d4d4d8;
             }
 
+            .account-status {
+                display: none;
+                padding: 16px;
+                border: 1px solid var(--border);
+                border-radius: 6px;
+                background: var(--bg);
+                text-align: left;
+            }
+
+            .account-status.show {
+                display: block;
+            }
+
+            .account-status p {
+                margin-bottom: 12px;
+                font-size: 13px;
+                color: var(--text-light);
+            }
+
+            .account-status strong {
+                color: var(--text);
+            }
+
+            .btn-signout {
+                width: 100%;
+                border: 1px solid var(--danger);
+                border-radius: 4px;
+                padding: 8px 24px;
+                background: var(--white);
+                color: var(--danger);
+                font-size: 13px;
+                cursor: pointer;
+            }
+
+            .btn-signout:hover {
+                background: #fef2f2;
+            }
+
             /* ═══════════════════════════════════════════
            CONTACT / SUPPORT FORM
            ═══════════════════════════════════════════ */
@@ -896,9 +934,9 @@
             </div>
 
             <div class="header-nav">
-                <a href="#signup-section">
-                    <span class="nav-label">Hello, Shopper</span>
-                    <span class="nav-value">Account</span>
+                <a href="signin.html?site=gadgetgrid" id="account-link">
+                    <span class="nav-label" id="account-label">Hello, Shopper</span>
+                    <span class="nav-value" id="account-value">Sign in</span>
                 </a>
                 <a href="#" id="orders-link">
                     <span class="nav-label">Returns</span>
@@ -1037,18 +1075,24 @@
             <div class="signup-section" id="signup-section">
                 <h3>Join GadgetGrid</h3>
                 <p class="subtitle">Member pricing, early drops and free returns</p>
-                <div class="form-group">
-                    <input type="text" id="signup-name" name="name" autocomplete="name" placeholder="Full name" />
+                <div id="signup-form-content">
+                    <div class="form-group">
+                        <input type="text" id="signup-name" name="name" autocomplete="name" placeholder="Full name" />
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="signup-email" name="email" autocomplete="email" placeholder="Email address" />
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="signup-password" name="password" autocomplete="new-password" placeholder="Create password" />
+                    </div>
+                    <button class="btn-signup" id="signup-btn">Create your GadgetGrid account</button>
+                    <div class="signup-divider">— Already a member? —</div>
+                    <button class="btn-signin" id="signin-btn">Sign in</button>
                 </div>
-                <div class="form-group">
-                    <input type="email" id="signup-email" name="email" autocomplete="email" placeholder="Email address" />
+                <div class="account-status" id="account-status">
+                    <p>Signed in as <strong id="account-email"></strong></p>
+                    <button class="btn-signout" id="signout-btn">Sign out</button>
                 </div>
-                <div class="form-group">
-                    <input type="password" id="signup-password" name="password" autocomplete="new-password" placeholder="Create password" />
-                </div>
-                <button class="btn-signup" id="signup-btn">Create your GadgetGrid account</button>
-                <div class="signup-divider">— Already a member? —</div>
-                <button class="btn-signin" id="signin-btn">Sign in</button>
             </div>
 
             <!-- ═══════════════════════════════════════════
@@ -1113,6 +1157,70 @@
                 </div>
             </div>
         </div>
+
+        <script>
+            (function () {
+                var ANONYMOUS_ID_COOKIE = 'anon_customer_id';
+                var SESSION_COOKIE = 'gg_session_id';
+                var PROFILE_KEY = 'gg_demo_profile';
+                var YEAR_IN_SECONDS = 365 * 24 * 60 * 60;
+                var COOKIE_PATH = window.location.pathname.slice(0, window.location.pathname.lastIndexOf('/') + 1) || '/';
+
+                function readCookie(name) {
+                    var match = document.cookie.match(
+                        new RegExp('(?:^|; )' + name.replace(/([.$?*|{}()[\]\\/+^])/g, '\\$1') + '=([^;]*)')
+                    );
+                    return match ? decodeURIComponent(match[1]) : null;
+                }
+
+                function writeCookie(name, value, maxAge) {
+                    var secure = window.location.protocol === 'https:' ? ';Secure' : '';
+                    document.cookie =
+                        name +
+                        '=' +
+                        encodeURIComponent(value) +
+                        ';path=' +
+                        COOKIE_PATH +
+                        ';max-age=' +
+                        maxAge +
+                        ';SameSite=Lax' +
+                        secure;
+                }
+
+                function randomId() {
+                    if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+                        return window.crypto.randomUUID().replace(/-/g, '');
+                    }
+                    return Array.from({ length: 32 }, function () {
+                        return Math.floor(Math.random() * 16).toString(16);
+                    }).join('');
+                }
+
+                function getProfile() {
+                    try {
+                        return JSON.parse(localStorage.getItem(PROFILE_KEY) || 'null');
+                    } catch {
+                        return null;
+                    }
+                }
+
+                if (!readCookie(ANONYMOUS_ID_COOKIE)) {
+                    writeCookie(ANONYMOUS_ID_COOKIE, randomId(), YEAR_IN_SECONDS);
+                }
+
+                window.GadgetGridAuth = {
+                    getProfile: getProfile,
+                    isSignedIn: function () {
+                        return Boolean(readCookie(SESSION_COOKIE) && getProfile());
+                    },
+                    signOut: function () {
+                        writeCookie(SESSION_COOKIE, '', 0);
+                        localStorage.removeItem(PROFILE_KEY);
+                        writeCookie(ANONYMOUS_ID_COOKIE, randomId(), YEAR_IN_SECONDS);
+                    },
+                };
+            })();
+        </script>
 
         <!-- ═══════════════════════════════════════════
          AAT TAG + CONSENT LIBRARY LOADER
@@ -1335,6 +1443,23 @@
             // ─── CART LOGIC ───
             let cartCount = 2;
             document.getElementById('cart-count').textContent = cartCount;
+            window.dataLayer = window.dataLayer || [];
+
+            function pushShoppingEvent(eventName, button) {
+                const clientDedupeId =
+                    window.crypto && typeof window.crypto.randomUUID === 'function'
+                        ? window.crypto.randomUUID()
+                        : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+
+                window.dataLayer.push({
+                    event: eventName,
+                    clientDedupeId,
+                    product_id: button.getAttribute('data-product-id'),
+                    product_name: button.getAttribute('data-product-name'),
+                    product_category: button.getAttribute('data-category'),
+                    value: Number(button.getAttribute('data-price')),
+                });
+            }
 
             function recalcCartTotal() {
                 let total = 0;
@@ -1351,6 +1476,7 @@
                     cartCount++;
                     document.getElementById('cart-count').textContent = cartCount;
                     const name = e.target.getAttribute('data-product-name');
+                    pushShoppingEvent('add_to_cart', e.target);
                     showNotification(`✅ Added "${name}" to your cart`);
                 });
             });
@@ -1359,6 +1485,7 @@
                 btn.addEventListener('click', (e) => {
                     const name = e.target.getAttribute('data-product-name');
                     const price = e.target.getAttribute('data-price');
+                    pushShoppingEvent('buy_now', e.target);
                     showNotification(`🔒 Starting 1-click order: "${name}" — $${parseInt(price).toLocaleString()}`);
                 });
             });
@@ -1407,7 +1534,13 @@
             });
 
             document.getElementById('signin-btn').addEventListener('click', () => {
-                showNotification('🔑 Redirecting to sign in...');
+                window.location.href = 'signin.html?site=gadgetgrid';
+            });
+
+            document.getElementById('signout-btn').addEventListener('click', () => {
+                window.GadgetGridAuth.signOut();
+                updateAccountUi();
+                showNotification('Signed out');
             });
 
             // ─── CONTACT / SUPPORT ───
@@ -1466,8 +1599,24 @@
                 showNotification._t = setTimeout(() => el.classList.remove('show'), 3000);
             }
 
+            function updateAccountUi() {
+                const signedIn = window.GadgetGridAuth.isSignedIn();
+                const profile = window.GadgetGridAuth.getProfile();
+                const accountLink = document.getElementById('account-link');
+
+                document.getElementById('account-label').textContent = signedIn
+                    ? `Hello, ${profile.displayName}`
+                    : 'Hello, Shopper';
+                document.getElementById('account-value').textContent = signedIn ? 'Account' : 'Sign in';
+                document.getElementById('account-email').textContent = signedIn ? profile.email : '';
+                accountLink.href = signedIn ? '#signup-section' : 'signin.html?site=gadgetgrid';
+                document.getElementById('signup-form-content').style.display = signedIn ? 'none' : 'block';
+                document.getElementById('account-status').classList.toggle('show', signedIn);
+            }
+
             // Initial total sync
             recalcCartTotal();
+            updateAccountUi();
         </script>
     </body>
 </html>
