@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>TravelHub sGTM - Server-Side Tagging Test Site</title>
+
+        <!--
+            Server-side GTM test page.
+
+            Unlike travelhub.html, this page does NOT load amzn.js. It loads only the Google Tag
+            Manager web container, so every event travels:
+
+                page (dataLayer) -> web container -> tagging server -> Amazon server-side tag -> /iu3
+
+            Keeping the two paths separate matters: if the client pixel also ran here, both it and
+            the server-side tag would fire for the same click and you would be reading two
+            overlapping sets of requests while trying to verify one parameter.
+
+            The tagging server URL is deliberately NOT in this file. It is configured on the GA4
+            Configuration tag inside the web container (Fields to Set -> server_container_url), so
+            this public page carries no infrastructure hostnames.
+        -->
+
+        <!-- Google Tag Manager -->
+        <script>
+            (function (w, d, s, l, i) {
+                w[l] = w[l] || [];
+                w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+                var f = d.getElementsByTagName(s)[0],
+                    j = d.createElement(s),
+                    dl = l != 'dataLayer' ? '&l=' + l : '';
+                j.async = true;
+                j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+                f.parentNode.insertBefore(j, f);
+            })(window, document, 'script', 'dataLayer', 'GTM-N4H2JGDD');
+        </script>
+        <!-- End Google Tag Manager -->
+
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family:
+                    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
+                    sans-serif;
+                color: #16242f;
+                background: #f4f7fa;
+                line-height: 1.55;
+            }
+
+            header {
+                background: #0b3d59;
+                color: #fff;
+                padding: 18px 28px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+
+            .brand {
+                font-size: 1.35rem;
+                font-weight: 700;
+                letter-spacing: -0.3px;
+            }
+
+            .brand span {
+                color: #ffb703;
+            }
+
+            .mode-pill {
+                background: rgba(255, 255, 255, 0.14);
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                padding: 5px 12px;
+                border-radius: 999px;
+                font-size: 0.8rem;
+            }
+
+            main {
+                max-width: 1080px;
+                margin: 0 auto;
+                padding: 28px 20px 60px;
+            }
+
+            .notice {
+                background: #fff8e1;
+                border: 1px solid #f2d388;
+                border-left: 4px solid #ffb703;
+                border-radius: 8px;
+                padding: 16px 18px;
+                margin-bottom: 26px;
+                font-size: 0.92rem;
+            }
+
+            .notice h2 {
+                font-size: 1rem;
+                margin-bottom: 8px;
+            }
+
+            .notice ol {
+                margin: 8px 0 0 20px;
+            }
+
+            .notice li {
+                margin-bottom: 4px;
+            }
+
+            .notice code {
+                background: #fff;
+                border: 1px solid #e6dcc0;
+                border-radius: 4px;
+                padding: 1px 5px;
+                font-size: 0.86rem;
+            }
+
+            h1 {
+                font-size: 1.7rem;
+                margin-bottom: 6px;
+            }
+
+            .sub {
+                color: #5a6b78;
+                margin-bottom: 26px;
+            }
+
+            section {
+                background: #fff;
+                border: 1px solid #e3e9ef;
+                border-radius: 10px;
+                padding: 20px;
+                margin-bottom: 22px;
+            }
+
+            section h2 {
+                font-size: 1.1rem;
+                margin-bottom: 14px;
+            }
+
+            .trips {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+                gap: 16px;
+            }
+
+            .trip {
+                border: 1px solid #e3e9ef;
+                border-radius: 8px;
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .trip .thumb {
+                height: 96px;
+                background: linear-gradient(135deg, #0b3d59, #1b6b93);
+                color: #fff;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.6rem;
+            }
+
+            .trip .body {
+                padding: 14px;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                flex: 1;
+            }
+
+            .trip .name {
+                font-weight: 600;
+            }
+
+            .trip .meta {
+                color: #6b7a87;
+                font-size: 0.85rem;
+            }
+
+            .trip .price {
+                font-weight: 700;
+                color: #0b3d59;
+            }
+
+            .row {
+                display: flex;
+                gap: 8px;
+                margin-top: auto;
+            }
+
+            button {
+                font: inherit;
+                cursor: pointer;
+                border: none;
+                border-radius: 6px;
+                padding: 9px 14px;
+                font-weight: 600;
+            }
+
+            .btn-primary {
+                background: #0b3d59;
+                color: #fff;
+            }
+
+            .btn-secondary {
+                background: #e9f1f6;
+                color: #0b3d59;
+            }
+
+            button:hover {
+                opacity: 0.9;
+            }
+
+            form {
+                display: grid;
+                gap: 12px;
+                max-width: 420px;
+            }
+
+            label {
+                font-size: 0.85rem;
+                font-weight: 600;
+                color: #41525f;
+                display: block;
+                margin-bottom: 4px;
+            }
+
+            input {
+                font: inherit;
+                width: 100%;
+                padding: 9px 11px;
+                border: 1px solid #ccd6de;
+                border-radius: 6px;
+            }
+
+            .hint {
+                font-size: 0.82rem;
+                color: #6b7a87;
+            }
+
+            #log {
+                background: #0f1b24;
+                color: #c9e5f5;
+                border-radius: 8px;
+                padding: 14px;
+                font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+                font-size: 0.8rem;
+                white-space: pre-wrap;
+                word-break: break-word;
+                min-height: 90px;
+                max-height: 320px;
+                overflow: auto;
+            }
+
+            .log-head {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 12px;
+            }
+
+            .toast {
+                position: fixed;
+                right: 20px;
+                bottom: 20px;
+                background: #16242f;
+                color: #fff;
+                padding: 12px 18px;
+                border-radius: 8px;
+                opacity: 0;
+                transform: translateY(8px);
+                transition:
+                    opacity 0.2s,
+                    transform 0.2s;
+                pointer-events: none;
+                font-size: 0.9rem;
+            }
+
+            .toast.show {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            footer {
+                text-align: center;
+                color: #6b7a87;
+                font-size: 0.85rem;
+                padding: 24px 20px 40px;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Google Tag Manager (noscript) -->
+        <noscript
+            ><iframe
+                src="https://www.googletagmanager.com/ns.html?id=GTM-N4H2JGDD"
+                height="0"
+                width="0"
+                style="display: none; visibility: hidden"
+            ></iframe
+        ></noscript>
+        <!-- End Google Tag Manager (noscript) -->
+
+        <header>
+            <div class="brand">Travel<span>Hub</span> sGTM</div>
+            <div class="mode-pill">Server-side tagging test page &middot; no client pixel</div>
+        </header>
+
+        <main>
+            <div class="notice">
+                <h2>What this page is for</h2>
+                This page loads the GTM <strong>web</strong> container only. It does not load
+                <code>amzn.js</code>. Events reach Amazon through the tagging server, which is what
+                makes it useful for testing the server-side tag template.
+                <ol>
+                    <li>
+                        Web container: add a GA4 Configuration tag, All Pages, with
+                        <code>server_container_url</code> set to your tagging server under Fields to
+                        Set.
+                    </li>
+                    <li>
+                        Server container: confirm the GA4 client is enabled so it claims the
+                        incoming request.
+                    </li>
+                    <li>
+                        Server container: add the Amazon Advertising Tag - Server Side, with a
+                        trigger on the event you want.
+                    </li>
+                    <li>
+                        Open server container Preview, then use the buttons below and read the
+                        outgoing HTTP request.
+                    </li>
+                </ol>
+            </div>
+
+            <h1>Book your next adventure</h1>
+            <p class="sub">
+                Every interaction below pushes one <code>dataLayer</code> event. Nothing is sent
+                anywhere from this page directly.
+            </p>
+
+            <section>
+                <h2>Trips</h2>
+                <div class="trips" id="trips"></div>
+            </section>
+
+            <section>
+                <h2>Sign up</h2>
+                <p class="hint" style="margin-bottom: 12px">
+                    Submitting pushes a <code>sign_up</code> event with a
+                    <code>user_data</code> object, so the advanced-matching path has email and phone
+                    to hash. Test values only — this page is public.
+                </p>
+                <form id="signup">
+                    <div>
+                        <label for="email">Email</label>
+                        <input id="email" type="email" value="test@example.com" />
+                    </div>
+                    <div>
+                        <label for="phone">Phone</label>
+                        <input id="phone" type="tel" value="+14155550123" />
+                    </div>
+                    <button class="btn-primary" type="submit">Create account</button>
+                </form>
+            </section>
+
+            <section>
+                <div class="log-head">
+                    <h2 style="margin: 0">dataLayer pushes from this page</h2>
+                    <button class="btn-secondary" id="clear-log" type="button">Clear</button>
+                </div>
+                <div id="log">Waiting for the first event…</div>
+            </section>
+        </main>
+
+        <footer>
+            &copy; 2026 TravelHub sGTM &mdash; server-side tagging test page. No real customer data.
+        </footer>
+
+        <div class="toast" id="toast"></div>
+
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            const TRIPS = [
+                {
+                    id: 'TRIP-1021',
+                    name: 'Lisbon city break',
+                    category: 'city',
+                    nights: 3,
+                    price: 420,
+                    icon: '🇵🇹',
+                },
+                {
+                    id: 'TRIP-1044',
+                    name: 'Kyoto in autumn',
+                    category: 'culture',
+                    nights: 7,
+                    price: 1890,
+                    icon: '🍁',
+                },
+                {
+                    id: 'TRIP-1077',
+                    name: 'Patagonia trek',
+                    category: 'adventure',
+                    nights: 10,
+                    price: 2640,
+                    icon: '🏔️',
+                },
+            ];
+
+            const logEl = document.getElementById('log');
+            const toastEl = document.getElementById('toast');
+            let logged = 0;
+
+            function newDedupeId() {
+                return window.crypto && typeof window.crypto.randomUUID === 'function'
+                    ? window.crypto.randomUUID()
+                    : Date.now() + '-' + Math.random().toString(16).slice(2);
+            }
+
+            function toast(message) {
+                toastEl.textContent = message;
+                toastEl.classList.add('show');
+                setTimeout(() => toastEl.classList.remove('show'), 2200);
+            }
+
+            // Single place where events leave the page, so the log always matches what GTM saw.
+            function pushEvent(payload) {
+                payload.clientDedupeId = newDedupeId();
+                window.dataLayer.push(payload);
+
+                const stamp = new Date().toLocaleTimeString();
+                const entry = stamp + '  ' + JSON.stringify(payload, null, 2);
+                logEl.textContent = logged === 0 ? entry : entry + '\n\n' + logEl.textContent;
+                logged++;
+                return payload;
+            }
+
+            function renderTrips() {
+                document.getElementById('trips').innerHTML = TRIPS.map(
+                    (trip) => `
+                    <div class="trip">
+                        <div class="thumb">${trip.icon}</div>
+                        <div class="body">
+                            <div class="name">${trip.name}</div>
+                            <div class="meta">${trip.nights} nights &middot; ${trip.category}</div>
+                            <div class="price">$${trip.price}</div>
+                            <div class="row">
+                                <button class="btn-secondary" data-action="view" data-id="${trip.id}">View</button>
+                                <button class="btn-secondary" data-action="add" data-id="${trip.id}">Add</button>
+                                <button class="btn-primary" data-action="book" data-id="${trip.id}">Book</button>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                ).join('');
+            }
+
+            function tripItem(trip) {
+                return {
+                    item_id: trip.id,
+                    item_name: trip.name,
+                    item_category: trip.category,
+                    price: trip.price,
+                    quantity: 1,
+                };
+            }
+
+            document.getElementById('trips').addEventListener('click', (event) => {
+                const button = event.target.closest('button[data-action]');
+                if (!button) return;
+
+                const trip = TRIPS.filter((t) => t.id === button.getAttribute('data-id'))[0];
+                const action = button.getAttribute('data-action');
+
+                if (action === 'view') {
+                    pushEvent({
+                        event: 'view_item',
+                        currency: 'USD',
+                        value: trip.price,
+                        items: [tripItem(trip)],
+                    });
+                    toast('view_item pushed for ' + trip.name);
+                }
+
+                if (action === 'add') {
+                    pushEvent({
+                        event: 'add_to_cart',
+                        currency: 'USD',
+                        value: trip.price,
+                        items: [tripItem(trip)],
+                    });
+                    toast('add_to_cart pushed for ' + trip.name);
+                }
+
+                if (action === 'book') {
+                    pushEvent({
+                        event: 'purchase',
+                        transaction_id: 'ORDER-' + Math.floor(Math.random() * 900000 + 100000),
+                        currency: 'USD',
+                        value: trip.price,
+                        items: [tripItem(trip)],
+                    });
+                    toast('purchase pushed for ' + trip.name);
+                }
+            });
+
+            document.getElementById('signup').addEventListener('submit', (event) => {
+                event.preventDefault();
+
+                const email = document.getElementById('email').value.trim();
+                const phone = document.getElementById('phone').value.trim();
+
+                pushEvent({
+                    event: 'sign_up',
+                    method: 'email',
+                    user_data: {
+                        email_address: email,
+                        phone_number: phone,
+                    },
+                });
+                toast('sign_up pushed with user_data');
+            });
+
+            document.getElementById('clear-log').addEventListener('click', () => {
+                logEl.textContent = 'Cleared. Waiting for the next event…';
+                logged = 0;
+            });
+
+            renderTrips();
+        </script>
+    </body>
+</html>
